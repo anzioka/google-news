@@ -6,4 +6,4 @@ export const REQUEST_SOURCES = "REQUEST_SOURCES";
 export const RECEIVE_SOURCES = "RECEIVE_SOURCES";
 export const NEWS_URL = "https://newsapi.org/v2/top-headlines?";
 export const SOURCES_URL="https://newsapi.org/v2/sources?";
-export const SELECT_LANGUAGE="SELECT_LANGUAGE";
+export const RESIZE_SCREEN = "RESIZE_SCREEN";

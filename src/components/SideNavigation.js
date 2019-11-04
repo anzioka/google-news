@@ -42,7 +42,7 @@ class NavItem extends Component {
     dispatch(fetchArticlesIfNeeded(item.value));
   }
   render() {
-    const {item, icon:Icon, selected} = this.props;
+    const {item, icon:Icon, selected, dispatch} = this.props;
     return (
       <LinkWrapper to = {`/news/${item.value}`} onClick = {this.handleSelectCategory} selected = {selected}>
           <IconWrapper>

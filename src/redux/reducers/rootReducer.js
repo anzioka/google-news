@@ -46,14 +46,7 @@ function articlesByCategory(state = {}, action) {
       return state;
   }
 }
-function language (state = 'en', action) {
-  switch (action.type) {
-    case types.SELECT_LANGUAGE:
-      return action.language;
-    default:
-      return state;
-  }
-}
+
 
 function newsSources(state = [], action) {
   switch (action.type) {
@@ -64,13 +57,22 @@ function newsSources(state = [], action) {
   }
 }
 
+function screenWidth(state = window.innerWidth, action) {
+  switch (action.type) {
+    case types.RESIZE_SCREEN:
+      return action.width
+    default:
+      return state
+  }
+}
+
 
 const rootReducer = combineReducers({
   sideNavVisible,
   selectedCategory,
   articlesByCategory,
-  language,
-  newsSources
+  newsSources,
+  screenWidth
 });
 
 export default rootReducer;

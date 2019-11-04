@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
+import { setScreenWidth } from './redux/actions/actions';
 import {
   MainContent,
   SideNavigation,
@@ -24,24 +25,24 @@ const AppWrapper = styled.div`
   cursor: default;
 `
 class App extends Component {
-  updateDimensions() {
-    console.log("width", window.innerWidth);
-  }
   componentDidMount() {
-    this.updateDimensions();
-    window.addEventListener('resize', this.udpateDimensions);
+    // this.updateDimensions();
+    const { dispatch } = this.props;
+    window.addEventListener('resize', () => {
+      dispatch(setScreenWidth())
+    });
   }
   componentWillUnmount() {
     window.removeEventListener('resize');
   }
   render() {
-    const { sideNavVisible }  = this.props;
+    const { sideNavVisible, screenWidth }  = this.props;
     return (
       <Router>
         <AppWrapper>
           <NavBar/>
           <AppInnerWrapper sideNavVisible = {sideNavVisible}>
-            <SideNavigation/>
+            { screenWidth > 992 && <SideNavigation/>}
             <MainContent />
           </AppInnerWrapper>
         </AppWrapper>
@@ -51,5 +52,6 @@ class App extends Component {
 }
 
 export default connect(store => ({
-  sideNavVisible : store.sideNavVisible
+  sideNavVisible : store.sideNavVisible,
+  screenWidth: store.screenWidth
 }))(App);

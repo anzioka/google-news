@@ -15,10 +15,10 @@ export function toggleSideNav() {
   };
 };
 
-export function selectLanguage(language) {
+export function setScreenWidth() {
   return {
-    type: types.SELECT_LANGUAGE,
-    language
+    type: types.RESIZE_SCREEN,
+    width: window.innerWidth
   }
 }
 
@@ -90,13 +90,10 @@ function fetchArticles(category) {
     dispatch(requestArticles(category))
     return fetch(`${types.NEWS_URL}category=${category}&apiKey=${AppConfig.NEWS_API}&country=us`)
       .then(response => response.json(), error => console.log("Fetch error:", error))
-      .then((json) => {
-        dispatch(receiveArticles(category, json.articles));
-        // const articles = filterNewsBySources(json.articles, getState()['newsSources']);
-        // dispatch(receiveArticles(category, articles));
-      })
-  }
+      .then(json  => dispatch(receiveArticles(category, json.articles)))
+    }
 }
+
 
 //todo: make sure to fetch once per day! also pageSize param
 //enable search for news
