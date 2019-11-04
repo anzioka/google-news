@@ -7,3 +7,4 @@ export const RECEIVE_SOURCES = "RECEIVE_SOURCES";
 export const NEWS_URL = "https://newsapi.org/v2/top-headlines?";
 export const SOURCES_URL="https://newsapi.org/v2/sources?";
 export const RESIZE_SCREEN = "RESIZE_SCREEN";
+export const BREAK_POINT = 992;

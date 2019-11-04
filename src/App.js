@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { setScreenWidth } from './redux/actions/actions';
+import { BREAK_POINT } from './redux/constants';
 import {
   MainContent,
   SideNavigation,
@@ -42,9 +43,10 @@ class App extends Component {
         <AppWrapper>
           <NavBar/>
           <AppInnerWrapper sideNavVisible = {sideNavVisible}>
-            { screenWidth > 992 && <SideNavigation/>}
+            { screenWidth > BREAK_POINT && <SideNavigation/>}
             <MainContent />
           </AppInnerWrapper>
+          { screenWidth <=  BREAK_POINT && <SideNavigation /> }
         </AppWrapper>
       </Router>
     );
@@ -52,6 +54,6 @@ class App extends Component {
 }
 
 export default connect(store => ({
-  sideNavVisible : store.sideNavVisible,
+  sideNavVisible : store.screenWidth <= BREAK_POINT ? false : store.sideNavVisible,
   screenWidth: store.screenWidth
 }))(App);

@@ -2,7 +2,8 @@ import { combineReducers } from 'redux';
 import * as types from '../constants';
 import { categories, selectCategory} from '../actions/actions';
 
-function sideNavVisible(state = true, action) {
+const visible = window.innerWidth <= types.BREAK_POINT ? false: true;
+function sideNavVisible(state = visible, action) {
   switch (action.type) {
     case types.TOGGLE_SIDENAV:
       return !state;

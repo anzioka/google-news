@@ -2,13 +2,16 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { categories, selectCategory,fetchArticlesIfNeeded} from '../redux/actions/actions';
+import { categories, selectCategory,fetchArticlesIfNeeded, toggleSideNav} from '../redux/actions/actions';
 import { NEUTRALS, PRIMARY_SHADES } from '../theme/colors';
+import { BREAK_POINT } from '../redux/constants';
 
 const NavigationWrapper = styled.div`
   display: ${props => props.visible ? 'flex' : 'none'};
   flex-direction: column;
+  flex-shrink: 0;
   width: 250px;
+  height: 100%;
   background-color: #f5f5f5;
   overflow-y:scroll;
   padding: 10px;
@@ -27,7 +30,6 @@ const LinkWrapper = styled(Link)`
   :hover{
     color: ${PRIMARY_SHADES[0]};
   }
-
 `
 
 const IconWrapper = styled.div`
@@ -53,24 +55,49 @@ class NavItem extends Component {
     )
   }
 }
+const Navigation = ({ visible, selectedCategory, dispatch}) => (
+  <NavigationWrapper visible = {visible}>
+    {
+      categories.map((item, index) => (
+        <NavItem key={index} item={item} icon = {item.icon} selected = {item.value === selectedCategory} dispatch = {dispatch} />
+      ))
+    }
+  </NavigationWrapper>
+)
+const SmallScreenWrapper = styled.div`
+  left: 0;
+  position: fixed;
+  display: ${props => props.visible ? 'block' : 'none'};
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  background-color: rgba(0,0,0,0.5);
+`
 
 class SideNavigation extends Component {
+  hideSideNavigation = () => {
+    const { dispatch } = this.props;
+    dispatch(toggleSideNav());
+  }
   render() {
-    const { visible, selectedCategory, dispatch } = this.props;
-    return (
-      <NavigationWrapper visible = {visible}>
-        {
-          categories.map((item, index) => (
-            <NavItem key={index} item={item} icon = {item.icon} selected = {item.value === selectedCategory} dispatch = {dispatch} />
-          ))
-        }
-      </NavigationWrapper>
-    )
+    const { visible, selectedCategory, dispatch, screenWidth } = this.props;
+    if (screenWidth < BREAK_POINT) {
+      return (
+        <SmallScreenWrapper visible = {visible} onClick = {this.hideSideNavigation}>
+          <Navigation {...this.props} />
+        </SmallScreenWrapper>
+      )
+    } else{
+      return (
+        <Navigation {...this.props} />
+      )
+    }
   }
 }
 
 
 export default connect(store => ({
   visible: store.sideNavVisible,
-  selectedCategory: store.selectedCategory
+  selectedCategory: store.selectedCategory,
+  screenWidth: store.screenWidth
 }))(SideNavigation);
