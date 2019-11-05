@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { NEUTRALS, PRIMARY_SHADES, GREEN} from '../theme/colors';
+import Moment from 'react-moment';
+import { NEUTRALS, PRIMARY_SHADES, PRIMARY_TINTS} from '../theme/colors';
 
 const OuterWrapper = styled.div`
   display: flex;
@@ -12,10 +13,12 @@ const OuterWrapper = styled.div`
   padding: 20px;
   :hover {
     background-color: ${NEUTRALS[7]}
+    border-color: ${PRIMARY_TINTS[2]}
   }
 `
 const RightContent = styled.div`
   width: 120px;
+  min-width: 100px;
   flex-direction: column
 `
 const LeftContent = styled.div`
@@ -39,6 +42,7 @@ const ArticleTitle = styled.h4`
   font-weight: 400;
   margin: 0;
   padding: 0;
+  margin-bottom: 4px;
 
 `
 const SourceAndTimeStamp = styled.div`
@@ -64,7 +68,14 @@ const ViewMoreButton = styled.button`
     background-color:${PRIMARY_SHADES[1]}
   }
 `
-
+const TimeStamp = styled.p`
+  margin: 0px 10px;
+  padding: 0;
+  ::before {
+    content: '.';
+    margin-right: 10px;
+  }
+`
 class NewsArticleItem extends Component {
   goToArticleSource = () => {
     const { item } = this.props;
@@ -81,8 +92,8 @@ class NewsArticleItem extends Component {
             </ArticleTitle>
 
             <SourceAndTimeStamp>
-              {item.source.name}
-
+              <span> {item.source.name} </span>
+              <TimeStamp> <Moment fromNow>{item.publishedAt}</Moment> </TimeStamp>
             </SourceAndTimeStamp>
           </ArticleMetaData>
           <ViewMoreButton onClick = {this.goToArticleSource}>

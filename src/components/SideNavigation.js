@@ -10,8 +10,8 @@ const NavigationWrapper = styled.div`
   display: ${props => props.visible ? 'flex' : 'none'};
   flex-direction: column;
   flex-shrink: 0;
+  height: ${props => props.screenWidth <= BREAK_POINT ? '100%': 'auto'}
   width: 250px;
-  height: 100%;
   background-color: #f5f5f5;
   overflow-y:scroll;
   padding: 10px;
@@ -55,8 +55,8 @@ class NavItem extends Component {
     )
   }
 }
-const Navigation = ({ visible, selectedCategory, dispatch}) => (
-  <NavigationWrapper visible = {visible}>
+const Navigation = ({ visible, selectedCategory, dispatch, screenWidth}) => (
+  <NavigationWrapper visible = {visible} screenWidth = {screenWidth}>
     {
       categories.map((item, index) => (
         <NavItem key={index} item={item} icon = {item.icon} selected = {item.value === selectedCategory} dispatch = {dispatch} />
