@@ -16,8 +16,8 @@ const SpinningCircle = styled.div`
   width: 50px;
   border-radius: 50%;
   animation: ${rotate} 2s linear infinite;
-  border: 1px solid ${NEUTRALS[4]};
-  border-top: 1px solid ${PRIMARY_SHADES[0]};
+  border: 2px solid ${NEUTRALS[4]};
+  border-top-color: ${PRIMARY_SHADES[0]};
 `
 const Wrapper = styled.div`
   width: 100%;

@@ -47,9 +47,11 @@ const ArticleTitle = styled.h4`
 `
 const SourceAndTimeStamp = styled.div`
   display: flex;
+  flex-wrap: wrap;
   flex-direction: row;
   color: ${NEUTRALS[0]};
   font-size: 14px;
+  margin-bottom: 20px;
 `
 const ViewMoreButton = styled.button`
   background-color: ${PRIMARY_SHADES[0]};
@@ -69,12 +71,16 @@ const ViewMoreButton = styled.button`
   }
 `
 const TimeStamp = styled.p`
-  margin: 0px 10px;
+  margin: 0px;
+  margin-right: 10px;
   padding: 0;
-  ::before {
-    content: '.';
-    margin-right: 10px;
-  }
+`
+const NewsSource = styled.h6`
+  font-size: 14px;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  color: ${PRIMARY_SHADES[0]};
 `
 class NewsArticleItem extends Component {
   goToArticleSource = () => {
@@ -92,8 +98,8 @@ class NewsArticleItem extends Component {
             </ArticleTitle>
 
             <SourceAndTimeStamp>
-              <span> {item.source.name} </span>
               <TimeStamp> <Moment fromNow>{item.publishedAt}</Moment> </TimeStamp>
+              <NewsSource onClick = {this.goToArticleSource}> {item.source.name} </NewsSource>
             </SourceAndTimeStamp>
           </ArticleMetaData>
           <ViewMoreButton onClick = {this.goToArticleSource}>
