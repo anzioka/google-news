@@ -2,18 +2,21 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import Moment from 'react-moment';
-import { NEUTRALS, PRIMARY_SHADES } from '../theme/colors';
+import { NEUTRALS, PRIMARY_SHADES, PRIMARY_TINTS } from '../theme/colors';
 import Button from './Button';
 const OuterWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  border: 1px solid ${NEUTRALS[4]};
+  border: 1px solid rgba(0,0,0,.125);
   border-radius: 5px;
+  background-color: white;
   margin-bottom: 20px;
   padding: 20px;
+  transition: all ease 1s;
+  :active,
   :hover {
-    background-color: ${NEUTRALS[7]}
-    border-color: ${NEUTRALS[2]}
+    background-color: rgba(255,255,255,0.8);
+    border-color: rgba(0,0,0,0.25);
   }
 `
 const RightContent = styled.div`
@@ -44,6 +47,7 @@ const ArticleTitle = styled.h4`
   margin-bottom: 5px;
   text-decoration: none;
   cursor: pointer;
+  color: #212529;
 `
 const SourceAndTimeStamp = styled.div`
   display: flex;

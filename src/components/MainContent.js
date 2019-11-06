@@ -8,6 +8,7 @@ import { fetchArticlesIfNeeded } from '../redux/actions/actions';
 const MainContentWrapper = styled.div`
   padding: 10px;
   overflow: auto;
+  background-color: #f5f5f5;
   height: 85vh;
   flex-grow: 1;
 `

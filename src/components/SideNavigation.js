@@ -13,16 +13,16 @@ const NavigationWrapper = styled.div`
   flex-shrink: 0;
   height: ${props => props.screenWidth <= BREAK_POINT ? '100%': 'auto'}
   width: 250px;
-  background-color: #f5f5f5;
+  background-color: #26547C;
   overflow-y:scroll;
   padding: 10px;
-  border-right: 1px solid #eee;
+  border-right: 1px solid #26547C;
 `
 
 const LinkWrapper = styled(Link)`
   font-weight: 400;
   text-decoration: none;
-  color: ${ props => props.selected ? PRIMARY_SHADES[0] : NEUTRALS[0]};
+  color: ${ props => props.selected ? PRIMARY_SHADES[0] : 'rgba(255,255,255,0.8)'};
   font-family: 'Roboto', sans-serif;
   margin-bottom: 25px;
   display: flex;

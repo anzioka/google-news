@@ -20,7 +20,7 @@ const AppInnerWrapper = styled.div`
 const AppWrapper = styled.div`
   font-family: 'Roboto', 'Open Sans' sans-serif;
   height: 100vh;
-  background-color: white;
+  background-color: #f5f5f5;
   display: flex;
   flex-direction: column;
   cursor: default;
