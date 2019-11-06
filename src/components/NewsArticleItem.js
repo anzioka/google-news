@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 import Moment from 'react-moment';
-import { NEUTRALS, PRIMARY_SHADES, PRIMARY_TINTS } from '../theme/colors';
-import Button from './Button';
+import { NEUTRALS, PRIMARY_SHADES } from '../theme/colors';
 const OuterWrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -44,6 +42,7 @@ const ArticleTitle = styled.h4`
   font-weight: 400;
   margin: 0;
   padding: 0;
+  font-family: 'Lato', sans-serif;
   margin-bottom: 5px;
   text-decoration: none;
   cursor: pointer;
@@ -57,23 +56,7 @@ const SourceAndTimeStamp = styled.div`
   font-size: 14px;
   margin-bottom: 20px;
 `
-const ViewMoreButton = styled(Button)`
-  background-color: ${PRIMARY_SHADES[0]};
-  color: white;
-  text-align: center;
-  white-space: nowrap;
-  vertical-align: middle;
-  border-color: ${PRIMARY_SHADES[0]};
-  border: 1px solid transparent;
-  font-size: 1rem;
-  line-height: 1.5;
-  :active,
-  :hover,
-  :focus {
-    outline: none;
-    background-color:${PRIMARY_SHADES[1]}
-  }
-`
+
 const TimeStamp = styled.p`
   margin: 0px;
   margin-right: 10px;
@@ -89,6 +72,7 @@ const NewsSource = styled.h6`
 class NewsArticleItem extends Component {
   goToArticleSource = () => {
     const { item } = this.props;
+    console.log(item);
     window.open(item.url, "_blank");
   }
   render() {
@@ -113,7 +97,6 @@ class NewsArticleItem extends Component {
             <img src={item.urlToImage} alt="" style={{maxWidth: '100%', height: 'auto', borderRadius: '5px'}}/>
           </RightContent>
         }
-
       </OuterWrapper>
     )
   }

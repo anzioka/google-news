@@ -2,9 +2,15 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { categories, selectCategory,fetchHeadlinesIfNeeded, toggleSideNav, setDisplayType} from '../redux/actions/actions';
+import {
+  categories,
+  selectCategory,
+  fetchHeadlinesIfNeeded,
+  toggleSideNav,
+  setDisplayType
+} from '../redux/actions/actions';
 import { HEADLINES_DISPLAY, INITIAL_SEARCH } from '../redux/constants';
-import { NEUTRALS, PRIMARY_SHADES } from '../theme/colors';
+import { PRIMARY_SHADES } from '../theme/colors';
 import { BREAK_POINT } from '../redux/constants';
 
 const NavigationWrapper = styled.div`

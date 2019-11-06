@@ -53,6 +53,7 @@ class NavBar extends Component {
     super(props);
     this.state = {
       searchStr: "",
+      error: false
     }
   }
 
@@ -61,20 +62,30 @@ class NavBar extends Component {
       searchStr: e.target.value,
     })
   }
+
   handleSearch = () => {
     const { history, dispatch } = this.props;
     const { searchStr } = this.state;
 
-    //deselect news category
-    dispatch(selectCategory(null));
+    if (searchStr === "") {
+      this.setState({
+        error: true
+      })
+    } else {
+      this.setState({
+        error: false
+      })
+      dispatch(selectCategory(null));
+      dispatch(setDisplayType(SEARCH_DISPLAY));
+      history.push(`/news/search?q=${searchStr}`);
+    }
 
-    //set display type to be `search`
-    dispatch(setDisplayType(SEARCH_DISPLAY));
-
-    //redirect to search results page
-    history.push(`/news/search?q=${searchStr}`);
-
+    //clear the search bar
+    this.setState({
+      searchStr: ""
+    })
   }
+
   handleKeyUp = (e) => {
     if (e.keyCode === 13) {
       this.handleSearch();
@@ -82,7 +93,7 @@ class NavBar extends Component {
   }
 
   render() {
-    const { searchStr } = this.state;
+    const { searchStr, error } = this.state;
     const { dispatch } = this.props;
     return (
       <NavWrapper>
@@ -95,7 +106,7 @@ class NavBar extends Component {
           </AppTitleWrapper>
         </NavBarItem>
         <NavBarItem>
-          <Searchbar value = {searchStr} onKeyUp = {this.handleKeyUp} placeholder="Enter text to search" onChange = {this.handleChange}/>
+          <Searchbar error = {error} value = {searchStr} onKeyUp = {this.handleKeyUp} placeholder="Enter text to search" onChange = {this.handleChange}/>
           <SearchButton onClick = {this.handleSearch}> Search News </SearchButton>
         </NavBarItem>
       </NavWrapper>

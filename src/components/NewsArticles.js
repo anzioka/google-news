@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { categories, searchArticlesIfNeeded, fetchHeadlinesIfNeeded, setDisplayType, selectCategory } from '../redux/actions/actions';
 import { INITIAL_SEARCH, HEADLINES_DISPLAY, SEARCH_DISPLAY, EXTRA_SEARCH } from '../redux/constants';
 import NewsArticleItem from './NewsArticleItem';
+import DisplayError from './DisplayError';
 import Spinner from './spinner';
 
 const CategoryLabelWrapper = styled.div`
@@ -14,12 +15,12 @@ const CategoryLabelWrapper = styled.div`
   font-size: 26px;
   align-items: center;
   font-family: 'Roboto', sans-serif;
-  font-weight: 400;
+  font-weight: 500;
   color: #202124;
 `
 const CategoryIconCircle = styled.div`
-  height: 60px;
-  width: 60px;
+  height: 50px;
+  width: 50px;
   border-radius: 50%;
   margin-right: 20px;
   display: flex;
@@ -33,7 +34,7 @@ const CategoryIconCircle = styled.div`
 const CategoryLabel = ({ label, icon: Icon }) => (
   <CategoryLabelWrapper>
     <CategoryIconCircle>
-        <Icon size={40} />
+        <Icon size={30} />
     </CategoryIconCircle>
     {label}
   </CategoryLabelWrapper>
@@ -73,7 +74,7 @@ class NewsArticles extends Component {
       //   scrolledToBottom: true
       // })
       const { location, articles, match, dispatch } = this.props;
-      if (location.pathname == "/news/search") {
+      if (location.pathname === "/news/search") {
         dispatch(searchArticlesIfNeeded(articles.query, EXTRA_SEARCH))
       } else{
         dispatch(fetchHeadlinesIfNeeded(match.params.category, EXTRA_SEARCH))
@@ -107,8 +108,22 @@ class NewsArticles extends Component {
     // console.log(hasMore);
     if (error != null) {
       console.log(error);
+      return null;
       //display nice error message
     }
+    console.log(articles);
+
+    //display error when no articles were matched.
+    if ( articles && articles.items.length === 0 && !articles.isFetching) {
+      let errorMessage =  "Sorry, but we are currently unable to fetch articles of category " + category + ". Please try again later.";
+      if (displayType === SEARCH_DISPLAY) {
+        errorMessage = "Your search \"" + articles.query + "\" did not match any articles. Make sure all the words are spelled correctly.";
+      }
+      return (
+        <DisplayError error = {errorMessage} />
+      )
+    }
+
     if (!articles || articles.isFetching) {
       return (
         <Spinner />
@@ -122,6 +137,7 @@ class NewsArticles extends Component {
         }
 
         {
+
           articles.items.map((item, index) => (
             <NewsArticleItem key = {index} item = {item} />
           ))

@@ -81,24 +81,19 @@ function fetchHeadlines(category, pageNum, searchType) {
       dispatch(requestArticles(category));
     }
     return fetch(`${types.HEADLINES_URL}category=${category}&page=${pageNum}&apiKey=${AppConfig.NEWS_API}&country=us`)
-      .then(response => response.json(), error => dispatch(setError("Uh-oh. An expected error occurred. Please try again later!")))
-      .then((json)  => {
-        dispatch(setError(null));
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else{
+          dispatch(setError(types.ERROR_MESSAGE));
+          return Promise.resolve();
+        }
+      })
+      .then((json) => {
         dispatch(receiveArticles(category, json, pageNum));
+        dispatch(setError(null));
       })
     }
-}
-
-
-//todo: make sure to fetch once per day! also pageSize param
-//enable search for news
-//
-function shouldFetchPosts(articles, category) {
-  if (articles) {
-    return true;
-  } else if (articles.isFetching) {
-    return false;
-  }
 }
 
 //
@@ -113,7 +108,7 @@ export function fetchHeadlinesIfNeeded(category, searchType) {
 
     if (articles) {
       //are we looking for extra results or what
-      if (searchType == types.INITIAL_SEARCH) {
+      if (searchType === types.INITIAL_SEARCH) {
         const diff = diffMinutes(articles.dateReceived, Date.now());
         if (diff >= QUERY_REFRESH_TIMER) {
           return dispatch(fetchHeadlines(category, pageNum, searchType));
@@ -160,33 +155,28 @@ function receiveSearchResults(query, json, pageNum) {
   }
 }
 
-//only keep records of current searc
-//search for articles
-//if (new query == current query)? --
-  //is the last search more than 5 minutes ago? refresh results? reset page number, and maximum page number
-//else:
-  //if there are more pages to go, fetch the next page,
 
-//is this a new query ? proceeed normally?
-  //check if there are any more pages remaining? maximum num of pages = 100/20
-//if totalResults < 100, then num pages = totalResults / 20
-//for current query we need to store current page number and maximum page number
-
-//if query is different: search and replace current results, reset page number counter
-//
 export function searchArticles(query, pageNum, searchType) {
   console.log("starting search");
   return dispatch => {
-    if (searchType == types.INITIAL_SEARCH) {
+    if (searchType === types.INITIAL_SEARCH) {
       dispatch(initiateSearch(query));
     }
     return fetch(`${types.EVERYTHING_URL}q=${query}&language=en&page=${pageNum}&sortBy=publishedAt&apiKey=${AppConfig.NEWS_API}`)
-      .then(response => response.json())
-      .then((json)  => {
-        dispatch(setError(null));
-        dispatch(receiveSearchResults(query, json, pageNum));
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else{
+          dispatch(setError(types.ERROR_MESSAGE));
+          return Promise.resolve();
+        }
       })
-  }
+      .then((json) => {
+        dispatch(receiveSearchResults(query, json, pageNum));
+        dispatch(setError(null));
+      })
+    }
+
 }
 
 function diffMinutes(date1, date2) {
@@ -195,7 +185,6 @@ function diffMinutes(date1, date2) {
   return Math.abs(Math.ceil(diff));
 }
 
-//need to disable search if the query is empty
 const QUERY_REFRESH_TIMER = 5;
 export function searchArticlesIfNeeded(query, searchType) {
   return (dispatch, getState ) => {

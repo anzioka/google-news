@@ -33,4 +33,6 @@ export const NEUTRALS :string[] = [
 export const BROWN = '#F59242';
 export const GREEN = '4CF542';
 export const BLACK = '#000';
-export const GREY = "#f5f5f5"
+export const GREY = "#f5f5f5";
+export const RED = "#dc3545";
+export const LIGHT_RED = "#F2B3B9";

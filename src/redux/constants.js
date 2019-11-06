@@ -22,3 +22,5 @@ export const MAX_QUERY_AGE = 5;
 
 export const EXTRA_SEARCH = "EXTRA_RESULTS";
 export const INITIAL_SEARCH = "INITIAL_RESULTS";
+
+export const ERROR_MESSAGE = "Uh-oh. An unexpected error occurred. Please try again later."
