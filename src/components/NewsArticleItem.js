@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 import Moment from 'react-moment';
 import { NEUTRALS, PRIMARY_SHADES } from '../theme/colors';
 import Button from './Button';
 const OuterWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  font-family: 'Open Sans', sans-serif;
   border: 1px solid ${NEUTRALS[4]};
   border-radius: 5px;
   margin-bottom: 20px;
@@ -19,7 +19,9 @@ const OuterWrapper = styled.div`
 const RightContent = styled.div`
   width: 120px;
   min-width: 100px;
-  flex-direction: column
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 `
 const LeftContent = styled.div`
   display: flex;
@@ -39,8 +41,9 @@ const ArticleTitle = styled.h4`
   font-weight: 400;
   margin: 0;
   padding: 0;
-  margin-bottom: 4px;
-
+  margin-bottom: 5px;
+  text-decoration: none;
+  cursor: pointer;
 `
 const SourceAndTimeStamp = styled.div`
   display: flex;
@@ -90,7 +93,7 @@ class NewsArticleItem extends Component {
       <OuterWrapper>
         <LeftContent>
           <ArticleMetaData>
-            <ArticleTitle>
+            <ArticleTitle onClick= {this.goToArticleSource}>
               {item.title}
             </ArticleTitle>
 
@@ -99,13 +102,14 @@ class NewsArticleItem extends Component {
               <NewsSource onClick = {this.goToArticleSource}> {item.source.name} </NewsSource>
             </SourceAndTimeStamp>
           </ArticleMetaData>
-          <ViewMoreButton onClick = {this.goToArticleSource}>
-            Read More
-          </ViewMoreButton>
+
         </LeftContent>
-        <RightContent>
-          <img src={item.urlToImage} alt="" style={{maxWidth: '100%', height: 'auto', borderRadius: '5px'}}/>
-        </RightContent>
+        {item.urlToImage !== null &&
+          <RightContent>
+            <img src={item.urlToImage} alt="" style={{maxWidth: '100%', height: 'auto', borderRadius: '5px'}}/>
+          </RightContent>
+        }
+
       </OuterWrapper>
     )
   }

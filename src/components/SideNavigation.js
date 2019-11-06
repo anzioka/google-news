@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { categories, selectCategory,fetchArticlesIfNeeded, toggleSideNav, setDisplayType} from '../redux/actions/actions';
-import { HEADLINES_DISPLAY } from '../redux/constants';
+import { categories, selectCategory,fetchHeadlinesIfNeeded, toggleSideNav, setDisplayType} from '../redux/actions/actions';
+import { HEADLINES_DISPLAY, INITIAL_SEARCH } from '../redux/constants';
 import { NEUTRALS, PRIMARY_SHADES } from '../theme/colors';
 import { BREAK_POINT } from '../redux/constants';
 
@@ -45,7 +45,7 @@ class NavItem extends Component {
     const { dispatch, item } = this.props;
     dispatch(selectCategory(item.value));
     dispatch(setDisplayType(HEADLINES_DISPLAY));
-    dispatch(fetchArticlesIfNeeded(item.value));
+    dispatch(fetchHeadlinesIfNeeded(item.value, INITIAL_SEARCH));
   }
   render() {
     const {item, icon:Icon, selected } = this.props;

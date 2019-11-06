@@ -61,24 +61,31 @@ function requestArticles(category) {
   }
 }
 
-function receiveArticles(category,articles) {
+function receiveArticles(category,json, pageNum) {
   return {
     type: types.RECEIVE_ARTICLES,
     category,
+    pageNum,
+    maxPages: getMaxPages(json.totalResults),
     dateReceived: Date.now(),
-    data: articles
+    data: json.articles,
   }
 }
 
 
 //async function: fetch headlines
 //need to modify this to fetch more: set page=?
-function fetchArticles(category) {
+function fetchHeadlines(category, pageNum, searchType) {
   return (dispatch, getState) => {
-    dispatch(requestArticles(category))
-    return fetch(`${types.HEADLINES_URL}category=${category}&apiKey=${AppConfig.NEWS_API}&country=us`)
-      .then(response => response.json(), error => console.log("Fetch error:", error))
-      .then(json  => dispatch(receiveArticles(category, json.articles)))
+    if (searchType === types.INITIAL_SEARCH) {
+      dispatch(requestArticles(category));
+    }
+    return fetch(`${types.HEADLINES_URL}category=${category}&page=${pageNum}&apiKey=${AppConfig.NEWS_API}&country=us`)
+      .then(response => response.json(), error => dispatch(setError("Uh-oh. An expected error occurred. Please try again later!")))
+      .then((json)  => {
+        dispatch(setError(null));
+        dispatch(receiveArticles(category, json, pageNum));
+      })
     }
 }
 
@@ -86,22 +93,44 @@ function fetchArticles(category) {
 //todo: make sure to fetch once per day! also pageSize param
 //enable search for news
 //
-function shouldFetchPosts(state, category) {
-  const articles = state.articlesByCategory[category];
-  if (!articles) {
+function shouldFetchPosts(articles, category) {
+  if (articles) {
     return true;
   } else if (articles.isFetching) {
     return false;
   }
 }
 
-export function fetchArticlesIfNeeded(category) {
+//
+export function fetchHeadlinesIfNeeded(category, searchType) {
   //want to fetch only if not fetching, or if there are more items to fetch
   return (dispatch, getState) => {
-    if (shouldFetchPosts(getState(), category)) {
-      return dispatch(fetchArticles(category));
-    } else{
+    const articles = getState().articlesByCategory[category];
+    if (articles && articles.isFetching) {
       return Promise.resolve();
+    }
+    const pageNum = articles && searchType === types.EXTRA_SEARCH ? articles.pageNum + 1 : 1;
+
+    if (articles) {
+      //are we looking for extra results or what
+      if (searchType == types.INITIAL_SEARCH) {
+        const diff = diffMinutes(articles.dateReceived, Date.now());
+        if (diff >= QUERY_REFRESH_TIMER) {
+          return dispatch(fetchHeadlines(category, pageNum, searchType));
+        } else{
+          console.log("Previous results still in cache");
+          return Promise.resolve();
+        }
+      } else {
+        //fetch extra results
+        if (articles.pageNum < articles.maxPages) {
+          return dispatch(fetchHeadlines(category, pageNum, searchType));
+        } else {
+          return Promise.resolve();
+        }
+      }
+    } else {
+      return dispatch(fetchHeadlines(category, pageNum, searchType));
     }
   }
 }
@@ -121,7 +150,6 @@ function getMaxPages(totalResults) {
 }
 
 function receiveSearchResults(query, json, pageNum) {
-  //console.log(json);
   return {
     type: types.RECEIVE_SEARCH_RESULTS,
     query,
@@ -146,11 +174,13 @@ function receiveSearchResults(query, json, pageNum) {
 
 //if query is different: search and replace current results, reset page number counter
 //
-export function searchArticles(query, pageNum) {
+export function searchArticles(query, pageNum, searchType) {
   console.log("starting search");
   return dispatch => {
-    dispatch(initiateSearch(query));
-    return fetch(`${types.EVERYTHING_URL}q=${query}&language=en&sortBy=publishedAt&apiKey=${AppConfig.NEWS_API}`)
+    if (searchType == types.INITIAL_SEARCH) {
+      dispatch(initiateSearch(query));
+    }
+    return fetch(`${types.EVERYTHING_URL}q=${query}&language=en&page=${pageNum}&sortBy=publishedAt&apiKey=${AppConfig.NEWS_API}`)
       .then(response => response.json())
       .then((json)  => {
         dispatch(setError(null));
@@ -174,31 +204,30 @@ export function searchArticlesIfNeeded(query, searchType) {
     }
 
     const current = getState().query;
-    if (current.isSearching) {
+    if (current.isFetching) {
       return Promise.resolve();
     }
 
     //what page number do we want? if user hit pressed search button we want to retrieve the first page
-    const pageNum = searchType === types.INITIAL_SEARCH ? 1 : current.pageNum;
-    // console.log(current);
+    const pageNum = searchType === types.INITIAL_SEARCH ? 1 : current.pageNum + 1;
     if (current.query === query) {
         if (searchType === types.INITIAL_SEARCH) {
           const diff = diffMinutes(current.dateReceived, Date.now());
           if (diff >= QUERY_REFRESH_TIMER) {
-            return dispatch(searchArticles(query, pageNum));
+            return dispatch(searchArticles(query, pageNum, searchType));
           } else{
             return Promise.resolve();
           }
         } else{
           if (current.pageNum < current.maxPages) {
-            return dispatch(searchArticles(query, pageNum));
+            return dispatch(searchArticles(query, pageNum, searchType));
           } else {
             return Promise.resolve();
           }
         }
     } else {
       //different query
-      return dispatch(searchArticles(query, pageNum));
+      return dispatch(searchArticles(query, pageNum, searchType));
     }
   }
 }

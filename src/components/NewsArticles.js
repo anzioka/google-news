@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { categories, searchArticlesIfNeeded } from '../redux/actions/actions';
-import { INITIAL_SEARCH, HEADLINES_DISPLAY } from '../redux/constants';
+import { categories, searchArticlesIfNeeded, fetchHeadlinesIfNeeded, setDisplayType, selectCategory } from '../redux/actions/actions';
+import { INITIAL_SEARCH, HEADLINES_DISPLAY, SEARCH_DISPLAY, EXTRA_SEARCH } from '../redux/constants';
 import NewsArticleItem from './NewsArticleItem';
 import Spinner from './spinner';
 
@@ -40,30 +40,71 @@ const CategoryLabel = ({ label, icon: Icon }) => (
 )
 
 class NewsArticles extends Component {
-  componentDidMount() {
-    // console.log(match.url);
-    // if (match.url = "/news/search") {
-    //   const searchStr = location.search.split("=")[1];
-    //  console.log(searchStr);
-    //   // dispatch(searchArticlesIfNeeded(searchStr));
-    // }
+  constructor(props) {
+    super(props);
+    this.state = {
+      scrolledToBottom: false,
+    }
+  }
+  loadPage = () => {
+    const { location, dispatch, match } = this.props;
+    if (location.pathname === "/news/search") {
+      const str = location.search.split("=")[1];
+      dispatch(setDisplayType(SEARCH_DISPLAY));
+      dispatch(selectCategory(null));
+      dispatch(searchArticlesIfNeeded(str, INITIAL_SEARCH));
+    } else {
+      const category = match.params.category;
+      dispatch(setDisplayType(HEADLINES_DISPLAY));
+      dispatch(selectCategory(category));
+      dispatch(fetchHeadlinesIfNeeded(category, INITIAL_SEARCH));
+    }
+  }
+  handleScroll = (e) => {
+    const div = e.target;
+    const scrolledToBottom = div.scrollTop + div.clientHeight === div.scrollHeight;
+    // this.setState({
+    //   scrolledToBottom: scrolledToBottom
+    // });
+
+    //want to fetch more data
+    if (scrolledToBottom) {
+      // this.setState({
+      //   scrolledToBottom: true
+      // })
+      const { location, articles, match, dispatch } = this.props;
+      if (location.pathname == "/news/search") {
+        dispatch(searchArticlesIfNeeded(articles.query, EXTRA_SEARCH))
+      } else{
+        dispatch(fetchHeadlinesIfNeeded(match.params.category, EXTRA_SEARCH))
+      }
+    }
 
   }
-  componentDidUpdate(prevProp) {
+  componentDidMount() {
+    //detect on scrolling to the bottom
+    document.querySelector("#main_content").addEventListener('scroll', this.handleScroll);
+    this.loadPage();
+
+  }
+  componentWillUnmount() {
+    document.querySelector("#main_content").removeEventListener('scroll', this.handleScroll);
+
+  }
+  componentDidUpdate(prevProps) {
     //console.log(this.props );
-    const {location, dispatch } = this.props;
-    if (prevProp.location !== location) {
-      if (location.pathname === "/news/search") {
-        const str = location.search.split("=")[1];
-        dispatch(searchArticlesIfNeeded(str, INITIAL_SEARCH));
-      }
+    const {location} = this.props;
+    if (prevProps.location !== location) {
+      this.loadPage();
     }
   }
   render() {
     //todo: show error message if there is one
     const { category, articles, error, displayType } = this.props;
-    console.log(articles);
-
+    const hasMore = articles && articles.pageNum < articles.maxPages;
+    const { scrolledToBottom } = this.state;
+    // console.log(articles);
+    // console.log(hasMore);
     if (error != null) {
       console.log(error);
       //display nice error message
@@ -73,7 +114,6 @@ class NewsArticles extends Component {
         <Spinner />
       )
     }
-    //handle search now?
 
     return (
       <div>
@@ -85,6 +125,13 @@ class NewsArticles extends Component {
           articles.items.map((item, index) => (
             <NewsArticleItem key = {index} item = {item} />
           ))
+        }
+
+        { hasMore &&
+          scrolledToBottom &&
+          <div style={{height: '50px', width: '100%'}}>
+            <Spinner />
+          </div>
         }
       </div>
     )
@@ -103,6 +150,7 @@ const mapStateToProps = state => {
     articles: displayType === HEADLINES_DISPLAY ? articlesByCategory[selectedCategory] : query,
     displayType: displayType,
     error: error
+    // hasMore: articles.pageNum < articles.maxPages
   }
 }
 export default connect(mapStateToProps)(NewsArticles);

@@ -24,7 +24,7 @@ const ToggleSideViewWrapper = styled.div`
   color: ${NEUTRALS[1]};
   display: flex;
   align-items: center;
-  margin-right: 40px;
+  margin-right: 30px;
   transition: all ease 0.5s;
   :hover{
     color: ${NEUTRALS[0]};

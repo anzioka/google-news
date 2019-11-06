@@ -21,7 +21,7 @@ function selectedCategory(state = categories[0].value, action) {
       return state;
   }
 }
-function articles(state = {isFetching: true, items : []}, action) {
+function articles(state = {isFetching: true, items : [], pageNum: 1, maxPages: 1, dateReceived: null}, action) {
   switch (action.type) {
     case types.REQUEST_ARTICLES:
       return Object.assign({}, state, {
@@ -29,8 +29,11 @@ function articles(state = {isFetching: true, items : []}, action) {
       });
     case types.RECEIVE_ARTICLES:
       return Object.assign({}, state, {
-        items: action.data,
-        isFetching: false
+        items: action.pageNum === 1 ? action.data : state.items.concat(action.data),
+        isFetching: false,
+        dateReceived: action.dateReceived,
+        pageNum: action.pageNum,
+        maxPages: action.maxPages
       });
     default:
       return state

@@ -12,15 +12,10 @@ const MainContentWrapper = styled.div`
   flex-grow: 1;
 `
 class MainContent extends Component {
-  componentDidMount() {
-    const { selectedCategory, history, dispatch } = this.props;
-    history.push(`/news/${selectedCategory}`);
-    dispatch(fetchArticlesIfNeeded(selectedCategory));
-  }
 
   render() {
     return (
-      <MainContentWrapper>
+      <MainContentWrapper id="main_content">
           <Switch>
             <Route path="/news/:category" component = { NewsArticles } />
             <Route path="/news/search/:query" component = {NewsArticles} />
