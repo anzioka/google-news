@@ -3,8 +3,12 @@ import AppConfig from '../../config/AppConfig';
 import {
   MdFlag,
   MdBusiness,
-  MdHealing
+  MdHealing,
+  MdLocalMovies,
 } from 'react-icons/md';
+
+import { FaRunning, FaMemory, FaFlask } from 'react-icons/fa';
+
 
 import * as types from '../constants';
 
@@ -40,11 +44,11 @@ export function setScreenWidth() {
 export const categories = [
   {icon: MdFlag, label: "General", value: 'general'},
   {icon: MdBusiness, label: "Business", value: 'business'},
-  {icon: MdFlag, label: "Entertainment", value: "entertainment"},
-  {icon: MdFlag, label: "Science", value: "science"},
-  {icon: MdFlag, label: "Sports", value: 'sports'},
+  {icon: MdLocalMovies, label: "Entertainment", value: "entertainment"},
+  {icon: FaFlask, label: "Science", value: "science"},
+  {icon: FaRunning, label: "Sports", value: 'sports'},
   {icon: MdHealing, label: "Health", value: 'health'},
-  {icon: MdFlag, label: "Technology", value: 'technology'},
+  {icon: FaMemory, label: "Technology", value: 'technology'},
 ];
 
 export function selectCategory(category) {

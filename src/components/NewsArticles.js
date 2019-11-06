@@ -104,14 +104,13 @@ class NewsArticles extends Component {
     const { category, articles, error, displayType } = this.props;
     const hasMore = articles && articles.pageNum < articles.maxPages;
     const { scrolledToBottom } = this.state;
-    // console.log(articles);
-    // console.log(hasMore);
+
+    //display error resulting from fetch request
     if (error != null) {
-      console.log(error);
-      return null;
-      //display nice error message
+      return (
+          <DisplayError error = {error} />
+      )
     }
-    console.log(articles);
 
     //display error when no articles were matched.
     if ( articles && articles.items.length === 0 && !articles.isFetching) {
@@ -137,7 +136,6 @@ class NewsArticles extends Component {
         }
 
         {
-
           articles.items.map((item, index) => (
             <NewsArticleItem key = {index} item = {item} />
           ))
