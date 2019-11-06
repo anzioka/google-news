@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import Moment from 'react-moment';
-import { NEUTRALS, PRIMARY_SHADES, PRIMARY_TINTS} from '../theme/colors';
-
+import { NEUTRALS, PRIMARY_SHADES } from '../theme/colors';
+import Button from './Button';
 const OuterWrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -13,7 +13,7 @@ const OuterWrapper = styled.div`
   padding: 20px;
   :hover {
     background-color: ${NEUTRALS[7]}
-    border-color: ${PRIMARY_TINTS[2]}
+    border-color: ${NEUTRALS[2]}
   }
 `
 const RightContent = styled.div`
@@ -28,9 +28,6 @@ const LeftContent = styled.div`
   flex-grow: 1;
   min-height: 100px;
   align-items: flex-start;
-`
-const ImageWrapper = styled.img`
-  width: 100%;
 `
 
 const ArticleMetaData = styled.div`
@@ -53,7 +50,7 @@ const SourceAndTimeStamp = styled.div`
   font-size: 14px;
   margin-bottom: 20px;
 `
-const ViewMoreButton = styled.button`
+const ViewMoreButton = styled(Button)`
   background-color: ${PRIMARY_SHADES[0]};
   color: white;
   text-align: center;
@@ -107,7 +104,7 @@ class NewsArticleItem extends Component {
           </ViewMoreButton>
         </LeftContent>
         <RightContent>
-          <img src={item.urlToImage} style={{maxWidth: '100%', height: 'auto', borderRadius: '5px'}}/>
+          <img src={item.urlToImage} alt="" style={{maxWidth: '100%', height: 'auto', borderRadius: '5px'}}/>
         </RightContent>
       </OuterWrapper>
     )

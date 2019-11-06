@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { Switch, Route, withRouter } from 'react-router-dom';
 import NewsArticles from './NewsArticles';
-import ArticleDetails from './ArticleDetails';
 import { fetchArticlesIfNeeded } from '../redux/actions/actions';
 
 const MainContentWrapper = styled.div`
@@ -20,12 +19,11 @@ class MainContent extends Component {
   }
 
   render() {
-    const { articles, dispatch } = this.props;
     return (
       <MainContentWrapper>
           <Switch>
-            <Route exact path="/news/:category" component = { NewsArticles } />
-            <Route path="/news/:category/:id" component = {ArticleDetails} />
+            <Route path="/news/:category" component = { NewsArticles } />
+            <Route path="/news/search/:query" component = {NewsArticles} />
           </Switch>
       </MainContentWrapper>
     )

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { categories } from '../redux/actions/actions';
-import { GREEN } from '../theme/colors';
+import { categories, searchArticlesIfNeeded } from '../redux/actions/actions';
+import { INITIAL_SEARCH, HEADLINES_DISPLAY } from '../redux/constants';
 import NewsArticleItem from './NewsArticleItem';
 import Spinner from './spinner';
 
@@ -40,22 +40,52 @@ const CategoryLabel = ({ label, icon: Icon }) => (
 )
 
 class NewsArticles extends Component {
+  componentDidMount() {
+    // console.log(match.url);
+    // if (match.url = "/news/search") {
+    //   const searchStr = location.search.split("=")[1];
+    //  console.log(searchStr);
+    //   // dispatch(searchArticlesIfNeeded(searchStr));
+    // }
+
+  }
+  componentDidUpdate(prevProp) {
+    //console.log(this.props );
+    const {location, dispatch } = this.props;
+    if (prevProp.location !== location) {
+      if (location.pathname === "/news/search") {
+        const str = location.search.split("=")[1];
+        dispatch(searchArticlesIfNeeded(str, INITIAL_SEARCH));
+      }
+    }
+  }
   render() {
-    const { category, articles } = this.props;
+    //todo: show error message if there is one
+    const { category, articles, error, displayType } = this.props;
+    console.log(articles);
+
+    if (error != null) {
+      console.log(error);
+      //display nice error message
+    }
     if (!articles || articles.isFetching) {
       return (
         <Spinner />
       )
     }
+    //handle search now?
+
     return (
       <div>
-        <CategoryLabel icon = {category.icon} label = {category.label}/>
+        {
+          displayType === HEADLINES_DISPLAY && <CategoryLabel icon = {category.icon} label = {category.label}/>
+        }
+
         {
           articles.items.map((item, index) => (
             <NewsArticleItem key = {index} item = {item} />
           ))
         }
-
       </div>
     )
   }
@@ -67,13 +97,12 @@ function getCategory(selectedCategory) {
 }
 
 const mapStateToProps = state => {
-  const { selectedCategory, articlesByCategory } = state;
-
-  // let items = articlesByCategory[selectedCategory];
-  // items = items ? items['items'] : []
+  const { selectedCategory, articlesByCategory, displayType, error, query} = state;
   return {
     category: getCategory(selectedCategory),
-    articles: articlesByCategory[selectedCategory]
+    articles: displayType === HEADLINES_DISPLAY ? articlesByCategory[selectedCategory] : query,
+    displayType: displayType,
+    error: error
   }
 }
 export default connect(mapStateToProps)(NewsArticles);

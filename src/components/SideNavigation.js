@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { categories, selectCategory,fetchArticlesIfNeeded, toggleSideNav} from '../redux/actions/actions';
+import { categories, selectCategory,fetchArticlesIfNeeded, toggleSideNav, setDisplayType} from '../redux/actions/actions';
+import { HEADLINES_DISPLAY } from '../redux/constants';
 import { NEUTRALS, PRIMARY_SHADES } from '../theme/colors';
 import { BREAK_POINT } from '../redux/constants';
 
@@ -27,8 +28,10 @@ const LinkWrapper = styled(Link)`
   display: flex;
   flex-direction: row;
   :active,
+  :focus,
   :hover{
     color: ${PRIMARY_SHADES[0]};
+    font-weight: 500;
   }
 `
 
@@ -41,10 +44,11 @@ class NavItem extends Component {
   handleSelectCategory = () => {
     const { dispatch, item } = this.props;
     dispatch(selectCategory(item.value));
+    dispatch(setDisplayType(HEADLINES_DISPLAY));
     dispatch(fetchArticlesIfNeeded(item.value));
   }
   render() {
-    const {item, icon:Icon, selected, dispatch} = this.props;
+    const {item, icon:Icon, selected } = this.props;
     return (
       <LinkWrapper to = {`/news/${item.value}`} onClick = {this.handleSelectCategory} selected = {selected}>
           <IconWrapper>
@@ -80,7 +84,7 @@ class SideNavigation extends Component {
     dispatch(toggleSideNav());
   }
   render() {
-    const { visible, selectedCategory, dispatch, screenWidth } = this.props;
+    const { visible, screenWidth } = this.props;
     if (screenWidth < BREAK_POINT) {
       return (
         <SmallScreenWrapper visible = {visible} onClick = {this.hideSideNavigation}>

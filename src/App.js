@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { setScreenWidth } from './redux/actions/actions';
@@ -34,7 +34,7 @@ class App extends Component {
     });
   }
   componentWillUnmount() {
-    window.removeEventListener('resize');
+    window.removeEventListener('resize', () => {});
   }
   render() {
     const { sideNavVisible, screenWidth }  = this.props;
