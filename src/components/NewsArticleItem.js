@@ -19,17 +19,17 @@ const OuterWrapper = styled.div`
 `
 const RightContent = styled.div`
   width: 120px;
-  min-width: 100px;
+  min-width: 120px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  margin-right: 15px;
 `
 const LeftContent = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   flex-grow: 1;
-  min-height: 100px;
   align-items: flex-start;
 `
 
@@ -43,7 +43,7 @@ const ArticleTitle = styled.h4`
   margin: 0;
   padding: 0;
   font-family: 'Lato', sans-serif;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   text-decoration: none;
   cursor: pointer;
   color: #212529;
