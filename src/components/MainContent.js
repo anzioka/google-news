@@ -8,6 +8,7 @@ const MainContentWrapper = styled.div`
   overflow: auto;
   background-color: #f5f5f5;
   height: 85vh;
+  max-height: 85vh;
   flex-grow: 1;
 `
 class MainContent extends Component {

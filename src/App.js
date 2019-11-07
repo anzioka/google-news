@@ -14,7 +14,7 @@ const AppInnerWrapper = styled.div`
   display: flex;
   flex-direction: row;
   flex-grow: 1;
-  margin: ${props => props.sideNavVisible ? `0px` : `0px 40px`};
+  margin: 0px;
 `
 
 const AppWrapper = styled.div`

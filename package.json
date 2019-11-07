@@ -6,6 +6,7 @@
   "dependencies": {
     "babel-polyfill": "^6.26.0",
     "cross-fetch": "^3.0.4",
+    "firebase": "^7.2.3",
     "moment": "^2.24.0",
     "query-string": "^6.8.3",
     "react": "^16.11.0",

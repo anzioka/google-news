@@ -44,6 +44,11 @@ const NavBarItem = styled.div`
   align-items: center;
   justify-content: center;
 `
+const SearchbarContainer = styled(NavBarItem)`
+  @media(max-width: 576px) {
+    display: none;
+  }
+`
 
 const SearchButton = styled(Button)`
   margin-left: 20px;
@@ -105,10 +110,10 @@ class NavBar extends Component {
               News
           </AppTitleWrapper>
         </NavBarItem>
-        <NavBarItem>
+        <SearchbarContainer>
           <Searchbar error = {error} value = {searchStr} onKeyUp = {this.handleKeyUp} placeholder="Enter text to search" onChange = {this.handleChange}/>
           <SearchButton onClick = {this.handleSearch}> Search News </SearchButton>
-        </NavBarItem>
+        </SearchbarContainer>
       </NavWrapper>
     )
   }
