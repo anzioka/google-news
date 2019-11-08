@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { categories, searchArticlesIfNeeded, fetchHeadlinesIfNeeded, setDisplayType, selectCategory } from '../redux/actions/actions';
+import { searchArticlesIfNeeded, fetchHeadlinesIfNeeded, setDisplayType, selectCategory } from '../redux/actions/actions';
+import newsCategories from '../utils/newsCategories';
 import { INITIAL_SEARCH, HEADLINES_DISPLAY, SEARCH_DISPLAY, EXTRA_SEARCH } from '../redux/constants';
 import NewsArticleItem from './NewsArticleItem';
 import DisplayError from './DisplayError';
@@ -17,7 +18,8 @@ const CategoryLabelWrapper = styled.div`
   font-family: 'Roboto', sans-serif;
   font-weight: 500;
   color: #202124;
-`
+`;
+
 const CategoryIconCircle = styled.div`
   height: 50px;
   width: 50px;
@@ -29,7 +31,7 @@ const CategoryIconCircle = styled.div`
   border: 1px solid GREEN;
   background-color: GREEN;
   justify-content: center;
-`
+`;
 
 const CategoryLabel = ({ label, icon: Icon }) => (
   <CategoryLabelWrapper>
@@ -39,6 +41,15 @@ const CategoryLabel = ({ label, icon: Icon }) => (
     {label}
   </CategoryLabelWrapper>
 )
+
+
+const ComponentHeader = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+`;
 
 class NewsArticles extends Component {
   constructor(props) {
@@ -64,15 +75,9 @@ class NewsArticles extends Component {
   handleScroll = (e) => {
     const div = e.target;
     const scrolledToBottom = div.scrollTop + div.clientHeight === div.scrollHeight;
-    // this.setState({
-    //   scrolledToBottom: scrolledToBottom
-    // });
 
     //want to fetch more data
     if (scrolledToBottom) {
-      // this.setState({
-      //   scrolledToBottom: true
-      // })
       const { location, articles, match, dispatch } = this.props;
       if (location.pathname === "/news/search") {
         dispatch(searchArticlesIfNeeded(articles.query, EXTRA_SEARCH))
@@ -130,10 +135,13 @@ class NewsArticles extends Component {
     }
 
     return (
-      <div>
-        {
-          displayType === HEADLINES_DISPLAY && <CategoryLabel icon = {category.icon} label = {category.label}/>
-        }
+      <React.Fragment>
+        <ComponentHeader>
+          {
+            displayType === HEADLINES_DISPLAY && <CategoryLabel icon = {category.icon} label = {category.label}/>
+          }
+
+        </ComponentHeader>
 
         {
           articles.items.map((item, index) => (
@@ -147,13 +155,13 @@ class NewsArticles extends Component {
             <Spinner />
           </div>
         }
-      </div>
+      </React.Fragment>
     )
   }
 }
 
 function getCategory(selectedCategory) {
-  const target = categories.filter((item) => item.value === selectedCategory)
+  const target = newsCategories.filter((item) => item.value === selectedCategory)
   return target[0];
 }
 
@@ -164,7 +172,6 @@ const mapStateToProps = state => {
     articles: displayType === HEADLINES_DISPLAY ? articlesByCategory[selectedCategory] : query,
     displayType: displayType,
     error: error
-    // hasMore: articles.pageNum < articles.maxPages
   }
 }
 export default connect(mapStateToProps)(NewsArticles);

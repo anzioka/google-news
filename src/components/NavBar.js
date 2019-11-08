@@ -8,6 +8,7 @@ import { toggleSideNav, selectCategory, setDisplayType } from '../redux/actions/
 import { SEARCH_DISPLAY } from '../redux/constants';
 import Searchbar from './Searchbar';
 import Button from './Button';
+import SearchbarAndButton from './SearchbarAndButton';
 
 const NavWrapper = styled.div`
   background-color: white;
@@ -111,6 +112,7 @@ class NavBar extends Component {
           </AppTitleWrapper>
         </NavBarItem>
         <SearchbarContainer>
+          <SearchbarAndButton />
           <Searchbar error = {error} value = {searchStr} onKeyUp = {this.handleKeyUp} placeholder="Enter text to search" onChange = {this.handleChange}/>
           <SearchButton onClick = {this.handleSearch}> Search News </SearchButton>
         </SearchbarContainer>

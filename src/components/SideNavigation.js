@@ -3,21 +3,21 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import {
-  categories,
   selectCategory,
   fetchHeadlinesIfNeeded,
   toggleSideNav,
   setDisplayType
 } from '../redux/actions/actions';
+import newsCategories from '../utils/newsCategories'
 import { HEADLINES_DISPLAY, INITIAL_SEARCH } from '../redux/constants';
 import { PRIMARY_SHADES } from '../theme/colors';
-import { BREAK_POINT } from '../redux/constants';
+import { SIDENAV_OVERLAY_MAXWIDTH } from '../utils/constants';
 
 const NavigationWrapper = styled.div`
   display: ${props => props.visible ? 'flex' : 'none'};
   flex-direction: column;
   flex-shrink: 0;
-  height: ${props => props.screenWidth <= BREAK_POINT ? '100%': 'auto'}
+  height: ${props => props.screenWidth <= SIDENAV_OVERLAY_MAXWIDTH ? '100%': 'auto'}
   width: 250px;
   background-color: #26547C;
   overflow-y:scroll;
@@ -65,15 +65,17 @@ class NavItem extends Component {
     )
   }
 }
+
 const Navigation = ({ visible, selectedCategory, dispatch, screenWidth}) => (
   <NavigationWrapper visible = {visible} screenWidth = {screenWidth}>
     {
-      categories.map((item, index) => (
+      newsCategories.map((item, index) => (
         <NavItem key={index} item={item} icon = {item.icon} selected = {item.value === selectedCategory} dispatch = {dispatch} />
       ))
     }
   </NavigationWrapper>
 )
+
 const SmallScreenWrapper = styled.div`
   left: 0;
   position: fixed;
@@ -91,7 +93,7 @@ class SideNavigation extends Component {
   }
   render() {
     const { visible, screenWidth } = this.props;
-    if (screenWidth < BREAK_POINT) {
+    if (screenWidth < SIDENAV_OVERLAY_MAXWIDTH) {
       return (
         <SmallScreenWrapper visible = {visible} onClick = {this.hideSideNavigation}>
           <Navigation {...this.props} />
@@ -104,7 +106,6 @@ class SideNavigation extends Component {
     }
   }
 }
-
 
 export default connect(store => ({
   visible: store.sideNavVisible,

@@ -3,7 +3,7 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { setScreenWidth } from './redux/actions/actions';
-import { BREAK_POINT } from './redux/constants';
+import { SIDENAV_OVERLAY_MAXWIDTH } from './utils/constants';
 import {
   MainContent,
   SideNavigation,
@@ -25,6 +25,7 @@ const AppWrapper = styled.div`
   flex-direction: column;
   cursor: default;
 `
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -34,7 +35,6 @@ class App extends Component {
     }
   }
   componentDidMount() {
-    // this.updateDimensions();
     const { dispatch } = this.props;
     window.addEventListener('resize', () => {
       dispatch(setScreenWidth())
@@ -49,10 +49,10 @@ class App extends Component {
       <AppWrapper>
         <NavBar/>
         <AppInnerWrapper sideNavVisible = {sideNavVisible}>
-          { screenWidth > BREAK_POINT && <SideNavigation/>}
+          { screenWidth > SIDENAV_OVERLAY_MAXWIDTH && <SideNavigation/>}
           <MainContent />
         </AppInnerWrapper>
-        { screenWidth <=  BREAK_POINT && <SideNavigation /> }
+        { screenWidth <=  SIDENAV_OVERLAY_MAXWIDTH && <SideNavigation /> }
       </AppWrapper>
     );
   }
@@ -60,7 +60,7 @@ class App extends Component {
 
 const mapStateToProps = store => {
   return {
-    sideNavVisible : store.screenWidth <= BREAK_POINT ? false : store.sideNavVisible,
+    sideNavVisible : store.screenWidth <= SIDENAV_OVERLAY_MAXWIDTH ? false : store.sideNavVisible,
     screenWidth: store.screenWidth
   }
 }

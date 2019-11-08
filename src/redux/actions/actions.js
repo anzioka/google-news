@@ -1,16 +1,8 @@
 import fetch from 'cross-fetch';
 import AppConfig from '../../config/AppConfig';
-import {
-  MdFlag,
-  MdBusiness,
-  MdHealing,
-  MdLocalMovies,
-} from 'react-icons/md';
-
-import { FaRunning, FaMemory, FaFlask } from 'react-icons/fa';
-
-
+import { HEADLINES_URL, EVERYTHING_URL, SEARCH_RESULTS_AGE, ERROR_MESSAGE } from '../../utils/constants';
 import * as types from '../constants';
+import { getMaxPages, diffMinutes } from '../../utils/Utils';
 
 export function setDisplayType(display) {
   return {
@@ -26,7 +18,6 @@ export function setError(message) {
   }
 }
 
-//toggle side navigation
 export function toggleSideNav() {
   return {
     type: types.TOGGLE_SIDENAV
@@ -40,16 +31,6 @@ export function setScreenWidth() {
   }
 }
 
-
-export const categories = [
-  {icon: MdFlag, label: "General", value: 'general'},
-  {icon: MdBusiness, label: "Business", value: 'business'},
-  {icon: MdLocalMovies, label: "Entertainment", value: "entertainment"},
-  {icon: FaFlask, label: "Science", value: "science"},
-  {icon: FaRunning, label: "Sports", value: 'sports'},
-  {icon: MdHealing, label: "Health", value: 'health'},
-  {icon: FaMemory, label: "Technology", value: 'technology'},
-];
 
 export function selectCategory(category) {
   return {
@@ -77,19 +58,18 @@ function receiveArticles(category,json, pageNum) {
 }
 
 
-//async function: fetch headlines
-//need to modify this to fetch more: set page=?
+//fetch news headlines
 function fetchHeadlines(category, pageNum, searchType) {
   return (dispatch, getState) => {
     if (searchType === types.INITIAL_SEARCH) {
       dispatch(requestArticles(category));
     }
-    return fetch(`${types.HEADLINES_URL}category=${category}&page=${pageNum}&apiKey=${AppConfig.NEWS_API}&country=us`)
+    return fetch(`${HEADLINES_URL}category=${category}&page=${pageNum}&apiKey=${AppConfig.NEWS_API}&country=us`)
       .then((response) => {
         if (response.ok) {
           return response.json();
         } else{
-          dispatch(setError(types.ERROR_MESSAGE));
+          dispatch(setError(ERROR_MESSAGE));
           return Promise.resolve();
         }
       })
@@ -100,9 +80,16 @@ function fetchHeadlines(category, pageNum, searchType) {
     }
 }
 
-//
+//gets called at the start of a network request for articles matching keyword => display spinner
+function initiateSearch(query) {
+  return {
+    type: types.INITIATE_SEARCH,
+    query
+  }
+}
+
+//searchType: INITIAL_SEARCH or EXTRA_SEARCH
 export function fetchHeadlinesIfNeeded(category, searchType) {
-  //want to fetch only if not fetching, or if there are more items to fetch
   return (dispatch, getState) => {
     const articles = getState().articlesByCategory[category];
     if (articles && articles.isFetching) {
@@ -111,13 +98,12 @@ export function fetchHeadlinesIfNeeded(category, searchType) {
     const pageNum = articles && searchType === types.EXTRA_SEARCH ? articles.pageNum + 1 : 1;
 
     if (articles) {
-      //are we looking for extra results or what
+      //are we looking for extra results
       if (searchType === types.INITIAL_SEARCH) {
         const diff = diffMinutes(articles.dateReceived, Date.now());
-        if (diff >= QUERY_REFRESH_TIMER) {
+        if (diff >= SEARCH_RESULTS_AGE) {
           return dispatch(fetchHeadlines(category, pageNum, searchType));
         } else{
-          console.log("Previous results still in cache");
           return Promise.resolve();
         }
       } else {
@@ -134,19 +120,6 @@ export function fetchHeadlinesIfNeeded(category, searchType) {
   }
 }
 
-function initiateSearch(query) {
-  return {
-    type: types.INITIATE_SEARCH,
-    query
-  }
-}
-
-const MAX_RESULTS = 100;
-const RESULTS_PER_PAGE = 20;
-function getMaxPages(totalResults) {
-  const maxResults = Math.min(MAX_RESULTS, totalResults);
-  return Math.ceil(maxResults/RESULTS_PER_PAGE);
-}
 
 function receiveSearchResults(query, json, pageNum) {
   return {
@@ -159,19 +132,18 @@ function receiveSearchResults(query, json, pageNum) {
   }
 }
 
-
 export function searchArticles(query, pageNum, searchType) {
   console.log("starting search");
   return dispatch => {
     if (searchType === types.INITIAL_SEARCH) {
       dispatch(initiateSearch(query));
     }
-    return fetch(`${types.EVERYTHING_URL}q=${query}&language=en&page=${pageNum}&sortBy=publishedAt&apiKey=${AppConfig.NEWS_API}`)
+    return fetch(`${EVERYTHING_URL}q=${query}&language=en&page=${pageNum}&sortBy=publishedAt&apiKey=${AppConfig.NEWS_API}`)
       .then((response) => {
         if (response.ok) {
           return response.json();
         } else{
-          dispatch(setError(types.ERROR_MESSAGE));
+          dispatch(setError(ERROR_MESSAGE));
           return Promise.resolve();
         }
       })
@@ -180,16 +152,9 @@ export function searchArticles(query, pageNum, searchType) {
         dispatch(setError(null));
       })
     }
-
 }
 
-function diffMinutes(date1, date2) {
-  var diff = (date2 - date1) / 1000;
-  diff /= 60;
-  return Math.abs(Math.ceil(diff));
-}
 
-const QUERY_REFRESH_TIMER = 5;
 export function searchArticlesIfNeeded(query, searchType) {
   return (dispatch, getState ) => {
     if (query === "") {
@@ -206,7 +171,7 @@ export function searchArticlesIfNeeded(query, searchType) {
     if (current.query === query) {
         if (searchType === types.INITIAL_SEARCH) {
           const diff = diffMinutes(current.dateReceived, Date.now());
-          if (diff >= QUERY_REFRESH_TIMER) {
+          if (diff >= SEARCH_RESULTS_AGE) {
             return dispatch(searchArticles(query, pageNum, searchType));
           } else{
             return Promise.resolve();
