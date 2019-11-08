@@ -112,7 +112,6 @@ class NavBar extends Component {
           </AppTitleWrapper>
         </NavBarItem>
         <SearchbarContainer>
-          <SearchbarAndButton />
           <Searchbar error = {error} value = {searchStr} onKeyUp = {this.handleKeyUp} placeholder="Enter text to search" onChange = {this.handleChange}/>
           <SearchButton onClick = {this.handleSearch}> Search News </SearchButton>
         </SearchbarContainer>
